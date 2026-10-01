@@ -8,6 +8,6 @@ window.AA_CONFIG = {
   paddlePriceIdStandard: "",       // Paddle price ID for $25/month (after 1000 founder spots are taken)
   priceFounder: "19.99",
   priceStandard: "25",
-  downloadUrl: "",                 // link to AutoAgent-Setup.exe when the installer is published
-  supportEmail: "bigocoin.network@gmail.com",
+  downloadUrl: "AutoAgent-Setup.exe", // installer hosted next to the site (temporary)
+  supportEmail: "",                 // public contact email (leave empty to hide the Contact link)
 };
