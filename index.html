@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AutoAgent — Your own autonomous AI agent, running on your PC</title>
+<meta name="description" content="AutoAgent is an autonomous AI agent that runs privately on your own PC. Give it a goal, it plans, researches and delivers. Control it from your phone.">
+<link rel="icon" href="app/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0b0d12;--panel:#11141b;--panel2:#161a23;--line:#232937;--line2:#2d3446;--text:#e7eaf0;--muted:#8b93a7;--dim:#5d6578;--accent:#7c6cff;--accent2:#4fd1c5;--ok:#3ecf8e;--err:#ff6b6b}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+.c{max-width:1100px;margin:0 auto;padding:0 20px}
+nav{position:sticky;top:0;z-index:10;backdrop-filter:blur(12px);background:#0b0d12cc;border-bottom:1px solid var(--line)}
+nav .c{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:18px;text-decoration:none}.brand img{width:30px;height:30px;border-radius:8px}
+nav .links{display:flex;gap:22px;align-items:center;font-size:14.5px;color:var(--muted)}nav .links a{text-decoration:none}nav .links a:hover{color:var(--text)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 20px;border-radius:12px;font-weight:600;text-decoration:none;border:0;cursor:pointer;font-size:15px;background:linear-gradient(135deg,var(--accent),#5b8cff);color:#fff;box-shadow:0 8px 30px #7c6cff40}
+.btn:hover{filter:brightness(1.08)}.btn.ghost{background:transparent;border:1px solid var(--line2);box-shadow:none;color:var(--text)}
+.btn.sm{padding:8px 14px;font-size:14px}
+.hero{padding:90px 0 60px;text-align:center;background:radial-gradient(900px 420px at 50% -60px,#7c6cff30,transparent)}
+.pill{display:inline-flex;gap:8px;align-items:center;font-size:13px;color:#cfc9ff;border:1px solid #7c6cff55;background:#7c6cff14;padding:6px 14px;border-radius:99px}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--ok);box-shadow:0 0 8px var(--ok)}
+h1{font-size:clamp(36px,6vw,64px);line-height:1.05;letter-spacing:-.035em;margin:22px auto 18px;max-width:880px}
+h1 span{background:linear-gradient(90deg,#a99fff,var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:clamp(17px,2.2vw,20px);color:var(--muted);max-width:640px;margin:0 auto 32px}
+.cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.small{color:var(--dim);font-size:13px;margin-top:14px}
+.shot{margin:56px auto 0;max-width:980px;border:1px solid var(--line2);border-radius:18px;overflow:hidden;box-shadow:0 30px 80px #000a,0 0 0 1px #ffffff08}
+.shot img{display:block;width:100%}
+section{padding:80px 0}
+h2{font-size:clamp(28px,4vw,40px);letter-spacing:-.03em;margin:0 0 10px;text-align:center}
+.sub{color:var(--muted);text-align:center;max-width:620px;margin:0 auto 44px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
+.card .ic{width:40px;height:40px;border-radius:11px;display:grid;place-items:center;background:#7c6cff1f;color:#b9b0ff;font-size:20px;margin-bottom:14px}
+.card h3{margin:0 0 6px;font-size:17px}.card p{margin:0;color:var(--muted);font-size:14.5px}
+.steps{counter-reset:s}.steps .card{position:relative}.steps .card::before{counter-increment:s;content:counter(s);position:absolute;top:20px;right:22px;font-size:40px;font-weight:800;color:#ffffff10}
+.pricing{display:grid;grid-template-columns:1fr 1fr;gap:18px;max-width:820px;margin:0 auto}
+.plan{background:var(--panel);border:1px solid var(--line);border-radius:20px;padding:30px}
+.plan.pro{border:1px solid #7c6cff88;background:linear-gradient(180deg,#7c6cff14,var(--panel) 40%);box-shadow:0 20px 60px #7c6cff22;position:relative}
+.plan h3{margin:0;font-size:18px}.price{font-size:46px;font-weight:800;letter-spacing:-.03em;margin:10px 0 2px}.price small{font-size:16px;color:var(--muted);font-weight:500}
+.plan ul{list-style:none;padding:0;margin:20px 0 24px}.plan li{padding:7px 0 7px 28px;position:relative;color:#cdd2dd;font-size:15px}
+.plan li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:700}.plan li.no::before{content:"–";color:var(--dim)}.plan li.no{color:var(--dim)}
+.plan .btn{width:100%}
+.ribbon{position:absolute;top:-13px;left:50%;transform:translateX(-50%);font-size:12px;font-weight:700;letter-spacing:.04em;padding:5px 14px;border-radius:99px;background:linear-gradient(135deg,var(--accent),#5b8cff);white-space:nowrap}
+.meter{height:8px;background:var(--line);border-radius:9px;overflow:hidden;margin:14px 0 6px}.meter div{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;transition:width 1s}
+.spots{font-size:13px;color:var(--muted)}
+details.faq{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 20px;margin-bottom:10px;max-width:780px;margin-left:auto;margin-right:auto}
+details.faq summary{cursor:pointer;font-weight:600;list-style:none}details.faq summary::-webkit-details-marker{display:none}
+details.faq p{color:var(--muted);margin:10px 0 0}
+footer{border-top:1px solid var(--line);padding:30px 0;color:var(--dim);font-size:14px}
+footer .c{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}footer a{color:var(--muted);text-decoration:none;margin-left:18px}
+/* modal */
+.modal{position:fixed;inset:0;z-index:50;background:#000a;display:grid;place-items:center;padding:16px}
+.box{width:100%;max-width:400px;background:var(--panel);border:1px solid var(--line2);border-radius:18px;padding:26px}
+.box h3{margin:0 0 4px;font-size:20px}.box p{color:var(--muted);margin:0 0 16px;font-size:14.5px}
+.in{width:100%;background:var(--bg);border:1px solid var(--line2);border-radius:11px;padding:12px 14px;color:var(--text);font:inherit;outline:0}.in:focus{border-color:var(--accent)}
+.code{letter-spacing:.5em;text-align:center;font-size:20px}
+.err{color:var(--err);font-size:13px;min-height:18px;margin-top:8px}
+.x{float:right;background:none;border:0;color:var(--dim);font-size:22px;cursor:pointer;margin:-8px -6px 0 0}
+.hide{display:none!important}
+@media(max-width:820px){.grid3,.pricing{grid-template-columns:1fr}nav .links a.hm{display:none}section{padding:56px 0}.hero{padding-top:60px}}
+</style>
+</head>
+<body>
+<nav><div class="c">
+  <a class="brand" href="#"><img src="app/icon-192.png" alt="">AutoAgent</a>
+  <div class="links"><a class="hm" href="#how">How it works</a><a class="hm" href="#pricing">Pricing</a><a class="hm" href="#faq">FAQ</a><a class="hm" href="app/">Phone remote</a><a class="btn sm" href="#download">Download</a></div>
+</div></nav>
+
+<header class="hero"><div class="c">
+  <span class="pill"><i></i><span id="heroSpots">Founder pricing — first 1000 users</span></span>
+  <h1>Your own <span>autonomous AI agent</span>, running on your PC</h1>
+  <p class="lead">Give AutoAgent a goal. It plans, searches the web, reads sources, uses your APIs and blockchains, and delivers finished reports — on its own. Private, unlimited, and controllable from your phone.</p>
+  <div class="cta"><a class="btn" href="#download">Download for Windows — free</a><a class="btn ghost" href="#pricing">See Pro</a><a class="btn ghost" href="app/">Open phone remote</a></div>
+  <p class="small">Free plan: 10 tasks a day. No credit card needed.</p>
+  <div class="shot"><img src="screenshot.png" alt="AutoAgent dashboard showing an agent completing a task step by step"></div>
+</div></header>
+
+<section id="how"><div class="c">
+  <h2>How it works</h2>
+  <p class="sub">The AI runs on your own computer. No cloud AI bills, no data leaving your PC except what the agent fetches for you.</p>
+  <div class="grid3 steps">
+    <div class="card"><div class="ic">⬇</div><h3>Install</h3><p>Download the Windows app. It sets up the free local AI engine automatically and picks the best model for your hardware.</p></div>
+    <div class="card"><div class="ic">✉</div><h3>Sign in</h3><p>Sign in with your email or phone number. That's your account on your PC, phone and browser.</p></div>
+    <div class="card"><div class="ic">▶</div><h3>Give it a goal</h3><p>"Research my competitors and write a report." Watch every step live, from your PC, Chrome or your phone.</p></div>
+  </div>
+</div></section>
+
+<section style="padding-top:0"><div class="c">
+  <div class="grid3">
+    <div class="card"><div class="ic">🔒</div><h3>Private by design</h3><p>Your tasks run on your own hardware. Your files stay in your workspace folder.</p></div>
+    <div class="card"><div class="ic">📱</div><h3>Phone remote</h3><p>Send tasks to your PC from anywhere and get results on your phone. No setup, no IP addresses.</p></div>
+    <div class="card"><div class="ic">🔗</div><h3>Connections</h3><p>Link websites, APIs and blockchain RPCs (BSC, Polygon, Ethereum). Read-only and safe.</p></div>
+    <div class="card"><div class="ic">⏰</div><h3>Schedules</h3><p>Daily market reports, weekly competitor checks — the agent runs them automatically.</p></div>
+    <div class="card"><div class="ic">⚡</div><h3>Parallel agents</h3><p>Run several agents at once on stronger PCs.</p></div>
+    <div class="card"><div class="ic">🧩</div><h3>Chrome extension</h3><p>Summarise, fact-check or research any page with one click.</p></div>
+  </div>
+</div></section>
+
+<section id="pricing"><div class="c">
+  <h2>Simple pricing</h2>
+  <p class="sub">Start free. Upgrade for unlimited tasks and the phone remote.</p>
+  <div class="pricing">
+    <div class="plan">
+      <h3>Free</h3><div class="price">$0</div><p class="spots">Forever</p>
+      <ul><li>AutoAgent PC app</li><li>10 tasks per day</li><li>2 connections</li><li>Chrome extension</li><li class="no">Phone remote</li><li class="no">Schedules</li><li class="no">Parallel agents</li></ul>
+      <a class="btn ghost" href="#download">Download free</a>
+    </div>
+    <div class="plan pro">
+      <span class="ribbon" id="ribbon">FOUNDER PRICE · FIRST 1000</span>
+      <h3>Pro</h3><div class="price">$<span id="proPrice">19.99</span><small>/month</small></div>
+      <div id="founderBox"><div class="meter"><div id="meter"></div></div><p class="spots" id="spots">Loading founder spots…</p></div>
+      <ul><li>Everything in Free</li><li><b>Unlimited</b> tasks</li><li>Phone remote — control your PC anywhere</li><li>Schedules</li><li>Unlimited connections</li><li>Parallel agents</li><li id="lockLi">Founder price locked forever</li></ul>
+      <button class="btn" id="buyBtn">Get Pro</button>
+      <p class="small" style="text-align:center">Cancel anytime. Prices exclude VAT where applicable.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="download" style="padding-top:0"><div class="c" style="text-align:center">
+  <div class="card" style="max-width:780px;margin:0 auto;padding:36px">
+    <h2 style="margin-bottom:8px">Download AutoAgent</h2>
+    <p class="sub" style="margin-bottom:22px">Windows 10/11 · Recommended: NVIDIA GPU with 6 GB+ VRAM and 16 GB RAM. Works on weaker PCs with smaller models.</p>
+    <a class="btn" id="dlBtn" href="#">Download for Windows</a>
+    <p class="small" id="dlNote"></p>
+  </div>
+</div></section>
+
+<section id="faq" style="padding-top:0"><div class="c">
+  <h2>FAQ</h2><p class="sub"></p>
+  <details class="faq"><summary>Is the AI really running on my computer?</summary><p>Yes. AutoAgent uses a free open-source model (Qwen3) through Ollama on your own PC. Our servers only handle your login, subscription and the phone remote connection.</p></details>
+  <details class="faq"><summary>What PC do I need?</summary><p>Windows 10 or 11. For best results an NVIDIA GPU with at least 6 GB VRAM and 16 GB RAM. Older PCs work with a smaller model, but slower and less accurate.</p></details>
+  <details class="faq"><summary>How does the phone remote work?</summary><p>Sign in on your phone with the same account. Your PC appears automatically. Tasks you send run on your PC and results appear on your phone. Your PC must be on with AutoAgent running.</p></details>
+  <details class="faq" id="founderFaq"><summary>What is the founder price?</summary><p>The first 1000 Pro subscribers pay $19.99/month — and keep that price for good, even if they cancel and come back later.</p></details>
+  <details class="faq"><summary>Can I cancel?</summary><p>Yes, anytime from the link in your receipt email. Pro stays active until the end of the paid period.</p></details>
+  <details class="faq"><summary>Is the AI always right?</summary><p>No AI is. AutoAgent shows every step and its sources so you can check results before relying on them.</p></details>
+</div></section>
+
+<footer><div class="c">
+  <span>© <span id="yr"></span> AutoAgent</span>
+  <span><a href="terms.html">Terms</a><a href="privacy.html">Privacy</a><a href="refund.html">Refunds</a><a id="mail" href="#">Contact</a></span>
+</div></footer>
+
+<!-- sign-in modal (needed so the subscription is linked to the right account) -->
+<div class="modal hide" id="modal"><div class="box">
+  <button class="x" id="mClose">×</button>
+  <h3>Sign in to continue</h3><p>Use the same email you use (or will use) in the AutoAgent app.</p>
+  <div id="m1"><input class="in" id="mEmail" type="email" placeholder="you@example.com"><button class="btn" id="mSend" style="width:100%;margin-top:12px">Send code</button></div>
+  <div id="m2" class="hide"><input class="in code" id="mCode" inputmode="numeric" maxlength="8" placeholder="••••••"><button class="btn" id="mVerify" style="width:100%;margin-top:12px">Continue to payment</button></div>
+  <div class="err" id="mErr"></div>
+</div></div>
+
+<script src="config.js"></script>
+<script src="https://cdn.paddle.com/paddle/v2/paddle.js"></script>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+const C = window.AA_CONFIG, $ = s => document.querySelector(s);
+const sb = createClient(C.supabaseUrl, C.supabaseKey);
+$("#yr").textContent = new Date().getFullYear();
+$("#mail").href = "mailto:" + C.supportEmail;
+if (C.downloadUrl) $("#dlBtn").href = C.downloadUrl; else { $("#dlBtn").removeAttribute("href"); $("#dlBtn").style.opacity = .6; $("#dlNote").textContent = "Download available at launch."; }
+
+// founder counter
+let spotsLeft = 1000;
+const founderOpen = () => spotsLeft > 0;
+async function loadSpots() {
+  const { data } = await sb.rpc("founder_spots");
+  if (!data) return;
+  spotsLeft = data.left;
+  if (founderOpen()) {
+    $("#meter").style.width = Math.max(2, data.taken / data.limit * 100) + "%";
+    $("#spots").textContent = `${data.left} of ${data.limit} founder spots left`;
+    $("#heroSpots").textContent = `Founder pricing — ${data.left} spots left`;
+    $("#proPrice").textContent = C.priceFounder;
+  } else {
+    // Founder offer is over: show the standard price, no founder wording
+    $("#proPrice").textContent = C.priceStandard;
+    ["#ribbon", "#founderBox", "#lockLi", "#founderFaq"].forEach(s => $(s)?.classList.add("hide"));
+    $("#heroSpots").textContent = "AutoAgent Pro is available";
+  }
+}
+loadSpots();
+
+// Paddle
+const paddleReady = !!(window.Paddle && C.paddleClientToken && C.paddlePriceIdFounder && C.paddlePriceIdStandard);
+if (paddleReady) {
+  if (C.paddleEnv === "sandbox") Paddle.Environment.set("sandbox");
+  Paddle.Initialize({ token: C.paddleClientToken, eventCallback: e => { if (e.name === "checkout.completed") setTimeout(() => { location.href = "app/"; }, 2500); } });
+}
+async function checkout() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return openModal();
+  if (!paddleReady) return alert("Payments are not live yet. Check back soon!");
+  await loadSpots(); // re-check right before checkout
+  // Founders (first 1000 Pro users) always keep the founder price, even if they come back later
+  const { data: prof } = await sb.from("profiles").select("founder").single();
+  const founderPrice = founderOpen() || prof?.founder === true;
+  Paddle.Checkout.open({
+    items: [{ priceId: founderPrice ? C.paddlePriceIdFounder : C.paddlePriceIdStandard, quantity: 1 }],
+    customer: { email: session.user.email },
+    customData: { user_id: session.user.id },   // links the subscription to this account
+  });
+}
+$("#buyBtn").onclick = checkout;
+// Returning from the email sign-in link: continue straight to checkout
+if (new URLSearchParams(location.search).get("checkout") === "1") {
+  history.replaceState(null, "", location.pathname + "#pricing");
+  sb.auth.getSession().then(({ data: { session } }) => { if (session) setTimeout(checkout, 800); });
+}
+
+// sign-in modal
+let email = "";
+const openModal = () => $("#modal").classList.remove("hide");
+$("#mClose").onclick = () => $("#modal").classList.add("hide");
+$("#mSend").onclick = async () => {
+  email = $("#mEmail").value.trim(); if (!email) return; $("#mErr").textContent = "";
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: location.origin + location.pathname + "?checkout=1#pricing" } });
+  if (error) return $("#mErr").textContent = error.message;
+  $("#m1").classList.add("hide"); $("#m2").classList.remove("hide");
+  $("#m2").insertAdjacentHTML("afterbegin", `<p>We emailed a <b>sign-in link</b> to ${email.replace(/[<>&]/g,"")}. Click it to continue to payment.<br><small>Got a code instead? Enter it below.</small></p>`);
+};
+$("#mVerify").onclick = async () => {
+  const { error } = await sb.auth.verifyOtp({ email, token: $("#mCode").value.trim(), type: "email" });
+  if (error) return $("#mErr").textContent = error.message;
+  $("#modal").classList.add("hide"); checkout();
+};
+</script>
+</body>
+</html>
