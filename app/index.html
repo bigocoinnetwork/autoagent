@@ -99,6 +99,9 @@ textarea.in{min-height:110px;resize:vertical}
         <button class="chip" data-g="Research my top 3 competitors and save a comparison as competitors.md.">Competitors</button>
         <button class="chip" data-g="Write 5 social media posts for my project and save them as posts.md.">Social posts</button>
       </div>
+      <label id="agRow" style="display:flex;align-items:center;gap:10px;margin-top:12px;color:var(--muted);font-size:14px">
+        <input type="checkbox" id="agChk" style="width:20px;height:20px;accent-color:#4fd1c5"> <span><b style="color:var(--text)">AutoGPT mode</b> · fully autonomous, full report</span>
+        <span id="agLock" style="margin-left:auto;font-size:11px;font-weight:700;border:1px solid var(--line2);border-radius:99px;padding:2px 8px">+$5/mo</span></label>
       <button class="btn" id="sendBtn">Send to PC ▸</button>
       <div class="err" id="sendErr"></div>
     </div>
@@ -163,13 +166,13 @@ $("#outBtn").onclick = async () => { await sb.auth.signOut(); location.reload();
 $("#recheck").onclick = e => { e.preventDefault(); start(); };
 
 // ---------- home ----------
-let user = null, devices = [], deviceId = localStorage.getItem("aa_device") || null, chan = null;
+let hasAuto = false, user = null, devices = [], deviceId = localStorage.getItem("aa_device") || null, chan = null;
 const online = d => Date.now() - new Date(d.last_seen) < 150000;
 async function start() {
   const { data: { session } } = await sb.auth.getSession();
   if (!session) return view("login");
   user = session.user;
-  const { data: prof } = await sb.from("profiles").select("plan,current_period_end").single();
+  const { data: prof } = await sb.from("profiles").select("plan,current_period_end,autogpt,autogpt_period_end").single();
   const pro = prof?.plan === "pro" && (!prof.current_period_end || new Date(prof.current_period_end) > new Date());
   if (!pro) {
     const { data: f } = await sb.rpc("founder_spots");
@@ -177,6 +180,8 @@ async function start() {
     if (f && f.left <= 0 && !me?.founder) { $("#pPrice").textContent = "25"; $("#fBadge").classList.add("hide"); $("#pLock").classList.add("hide"); }
     return view("pro");
   }
+  hasAuto = !!(prof?.autogpt && (!prof.autogpt_period_end || new Date(prof.autogpt_period_end) > new Date()));
+  $("#agLock").textContent = hasAuto ? "ACTIVE" : "+$5/mo"; $("#agLock").style.color = hasAuto ? "#4fd1c5" : "";
   view("home"); await loadDevices(); await loadTasks();
 }
 async function loadDevices() {
@@ -203,7 +208,9 @@ $("#tasks").onclick = e => { const t = e.target.closest(".t"); if (t) openTask(+
 $$(".chip").forEach(c => c.onclick = () => { $("#goal").value = c.dataset.g; $("#goal").focus(); });
 $("#sendBtn").onclick = async () => {
   const goal = $("#goal").value.trim(); if (!goal || !deviceId) return; $("#sendErr").textContent = "";
-  const { data, error } = await sb.from("remote_tasks").insert({ user_id: user.id, device_id: deviceId, goal }).select().single();
+  const auto = $("#agChk").checked;
+  if (auto && !hasAuto) return $("#sendErr").innerHTML = 'AutoGPT mode is a $5/month add-on for Pro. <a href="../#autogpt">Add it here</a>.';
+  const { data, error } = await sb.from("remote_tasks").insert({ user_id: user.id, device_id: deviceId, goal, mode: auto ? "autogpt" : "standard" }).select().single();
   if (error) return $("#sendErr").textContent = /row-level security/.test(error.message) ? "Phone remote requires Pro." : error.message;
   $("#goal").value = ""; openTask(data.id);
 };
@@ -212,6 +219,10 @@ $("#sendBtn").onclick = async () => {
 let curTask = null, lastStep = 0, poller = null;
 const KIND = { tool: "Action", observation: "Result", thought: "Thinking", info: "Info", error: "Error" };
 function stepHTML(s) {
+  if (s.kind === "plan") { let p = {}; try { p = JSON.parse(s.content); } catch {}
+    return `<div class="answer" style="border-color:#4fd1c555;margin-bottom:8px"><b style="color:#4fd1c5;font-size:12px;letter-spacing:.06em">${esc(s.title).toUpperCase()}</b><ul style="margin:6px 0 0;padding-left:18px">${(p.done||[]).map(t=>`<li style="color:var(--muted);text-decoration:line-through">${esc(t)}</li>`).join("")}${(p.tasks||[]).map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>`; }
+  if (s.kind === "subtask") return `<p style="font-weight:600;margin:14px 0 6px">▶ ${esc(s.title)}</p>`;
+  if (s.kind === "subtask_done") return `<details class="step"><summary><span class="k" style="color:#3ecf8e">Done</span><span>${esc(s.title)}</span></summary><pre>${esc(s.content)}</pre></details>`;
   if (s.kind === "status") { $("#wText").textContent = s.title + "…"; return ""; }
   if (s.kind === "final") return `<div class="answer">${md(String(s.content || "").replace(/^\s*#*\s*\**final answer\**:?\s*/i, ""))}</div>`;
   return `<details class="step"><summary><span class="k ${s.kind}">${KIND[s.kind] || s.kind}</span><span>${esc(s.title)}</span></summary>${s.content ? `<pre>${esc(s.content)}</pre>` : ""}</details>`;

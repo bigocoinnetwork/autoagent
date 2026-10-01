@@ -64,7 +64,7 @@ footer .c{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}foo
 .err{color:var(--err);font-size:13px;min-height:18px;margin-top:8px}
 .x{float:right;background:none;border:0;color:var(--dim);font-size:22px;cursor:pointer;margin:-8px -6px 0 0}
 .hide{display:none!important}
-@media(max-width:820px){.grid3,.pricing{grid-template-columns:1fr}nav .links a.hm{display:none}section{padding:56px 0}.hero{padding-top:60px}}
+@media(max-width:820px){#autogpt .plan{grid-template-columns:1fr!important}.grid3,.pricing{grid-template-columns:1fr}nav .links a.hm{display:none}section{padding:56px 0}.hero{padding-top:60px}}
 </style>
 </head>
 <body>
@@ -109,16 +109,33 @@ footer .c{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}foo
   <div class="pricing">
     <div class="plan">
       <h3>Free</h3><div class="price">$0</div><p class="spots">Forever</p>
-      <ul><li>AutoAgent PC app</li><li>10 tasks per day</li><li>2 connections</li><li>Chrome extension</li><li class="no">Phone remote</li><li class="no">Schedules</li><li class="no">Parallel agents</li></ul>
+      <ul><li>AutoAgent PC app</li><li>10 tasks per day</li><li>2 connections</li><li>Chrome extension</li><li class="no">Phone remote</li><li class="no">Schedules</li><li class="no">Parallel agents</li><li class="no">AutoGPT mode</li></ul>
       <a class="btn ghost" href="#download">Download free</a>
     </div>
     <div class="plan pro">
       <span class="ribbon" id="ribbon">FOUNDER PRICE · FIRST 1000</span>
       <h3>Pro</h3><div class="price">$<span id="proPrice">19.99</span><small>/month</small></div>
       <div id="founderBox"><div class="meter"><div id="meter"></div></div><p class="spots" id="spots">Loading founder spots…</p></div>
-      <ul><li>Everything in Free</li><li><b>Unlimited</b> tasks</li><li>Phone remote — control your PC anywhere</li><li>Schedules</li><li>Unlimited connections</li><li>Parallel agents</li><li id="lockLi">Founder price locked forever</li></ul>
+      <ul><li>Everything in Free</li><li><b>Unlimited</b> tasks</li><li>Phone remote — control your PC anywhere</li><li>Schedules</li><li>Unlimited connections</li><li>Parallel agents</li><li id="lockLi">Founder price locked forever</li><li>Can add <b>AutoGPT mode</b> (+$5/mo)</li></ul>
       <button class="btn" id="buyBtn">Get Pro</button>
       <p class="small" style="text-align:center">Cancel anytime. Prices exclude VAT where applicable.</p>
+    </div>
+  </div>
+</div></section>
+
+<section id="autogpt" style="padding-top:0"><div class="c">
+  <div class="plan" style="max-width:820px;margin:0 auto;border:1px solid #4fd1c588;background:linear-gradient(135deg,#4fd1c514,var(--panel) 50%);display:grid;grid-template-columns:1.4fr 1fr;gap:26px;align-items:center">
+    <div>
+      <span class="pill" style="border-color:#4fd1c566;background:#4fd1c514;color:#bff3ec">ADD-ON FOR PRO</span>
+      <h2 style="text-align:left;margin:14px 0 8px">AutoGPT mode</h2>
+      <p style="color:var(--muted);margin:0 0 14px">Give it a big goal and walk away. AutoGPT mode builds its own task list, works through every task with web research, your connections and files, reviews its own progress, adds what's missing — and delivers a full report.</p>
+      <ul style="list-style:none;padding:0;margin:0"><li style="padding:5px 0 5px 26px;position:relative;color:#cdd2dd">✓ Self-made task lists with live progress</li><li style="padding:5px 0 5px 26px;position:relative;color:#cdd2dd">✓ Self-review: adds or drops tasks as it learns</li><li style="padding:5px 0 5px 26px;position:relative;color:#cdd2dd">✓ Long-term memory between runs</li><li style="padding:5px 0 5px 26px;position:relative;color:#cdd2dd">✓ Runs up to an hour per goal · from PC, Chrome or phone</li></ul>
+    </div>
+    <div style="text-align:center">
+      <div class="price">+$<span id="agPrice">5</span><small>/month</small></div>
+      <p class="spots" style="margin-bottom:18px">Requires an active Pro plan</p>
+      <button class="btn" id="agBuy" style="width:100%">Add AutoGPT mode</button>
+      <p class="small">Cancel anytime. Stops automatically if Pro ends.</p>
     </div>
   </div>
 </div></section>
@@ -138,6 +155,7 @@ footer .c{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}foo
   <details class="faq"><summary>What PC do I need?</summary><p>Windows 10 or 11. For best results an NVIDIA GPU with at least 6 GB VRAM and 16 GB RAM. Older PCs work with a smaller model, but slower and less accurate.</p></details>
   <details class="faq"><summary>How does the phone remote work?</summary><p>Sign in on your phone with the same account. Your PC appears automatically. Tasks you send run on your PC and results appear on your phone. Your PC must be on with AutoAgent running.</p></details>
   <details class="faq" id="founderFaq"><summary>What is the founder price?</summary><p>The first 1000 Pro subscribers pay $19.99/month — and keep that price for good, even if they cancel and come back later.</p></details>
+  <details class="faq"><summary>What is AutoGPT mode?</summary><p>An add-on for Pro users (+$5/month). Instead of answering one task, the agent plans a whole project: it creates its own task list, completes each task, reviews its progress and writes a full report. You need an active Pro plan to buy and use it.</p></details>
   <details class="faq"><summary>Can I cancel?</summary><p>Yes, anytime from the link in your receipt email. Pro stays active until the end of the paid period.</p></details>
   <details class="faq"><summary>Is the AI always right?</summary><p>No AI is. AutoAgent shows every step and its sources so you can check results before relying on them.</p></details>
 </div></section>
@@ -163,7 +181,7 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const C = window.AA_CONFIG, $ = s => document.querySelector(s);
 const sb = createClient(C.supabaseUrl, C.supabaseKey);
 $("#yr").textContent = new Date().getFullYear();
-$("#mail").href = "mailto:" + C.supportEmail;
+if (C.supportEmail) $("#mail").href = "mailto:" + C.supportEmail; else $("#mail").remove();
 if (C.downloadUrl) $("#dlBtn").href = C.downloadUrl; else { $("#dlBtn").removeAttribute("href"); $("#dlBtn").style.opacity = .6; $("#dlNote").textContent = "Download available at launch."; }
 
 // founder counter
@@ -208,6 +226,20 @@ async function checkout() {
   });
 }
 $("#buyBtn").onclick = checkout;
+$("#agPrice").textContent = C.priceAutogpt;
+
+// AutoGPT add-on: Pro users only
+let pendingAddon = false;
+async function buyAutogpt() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { pendingAddon = true; return openModal(); }
+  const { data: prof } = await sb.from("profiles").select("plan,autogpt").single();
+  if (prof?.plan !== "pro") { alert("AutoGPT mode is an add-on for Pro users. Get Pro first — then add AutoGPT."); return location.hash = "#pricing"; }
+  if (prof?.autogpt) return alert("AutoGPT mode is already active on your account.");
+  if (!(window.Paddle && C.paddleClientToken && C.paddlePriceIdAutogpt)) return alert("Payments are not live yet. Check back soon!");
+  Paddle.Checkout.open({ items: [{ priceId: C.paddlePriceIdAutogpt, quantity: 1 }], customer: { email: session.user.email }, customData: { user_id: session.user.id } });
+}
+$("#agBuy").onclick = buyAutogpt;
 // Returning from the email sign-in link: continue straight to checkout
 if (new URLSearchParams(location.search).get("checkout") === "1") {
   history.replaceState(null, "", location.pathname + "#pricing");
@@ -228,7 +260,7 @@ $("#mSend").onclick = async () => {
 $("#mVerify").onclick = async () => {
   const { error } = await sb.auth.verifyOtp({ email, token: $("#mCode").value.trim(), type: "email" });
   if (error) return $("#mErr").textContent = error.message;
-  $("#modal").classList.add("hide"); checkout();
+  $("#modal").classList.add("hide"); if (pendingAddon) { pendingAddon = false; buyAutogpt(); } else checkout();
 };
 </script>
 </body>
