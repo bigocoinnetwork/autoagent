@@ -100,7 +100,7 @@ textarea.in{min-height:110px;resize:vertical}
         <button class="chip" data-g="Write 5 social media posts for my project and save them as posts.md.">Social posts</button>
       </div>
       <label id="agRow" style="display:flex;align-items:center;gap:10px;margin-top:12px;color:var(--muted);font-size:14px">
-        <input type="checkbox" id="agChk" style="width:20px;height:20px;accent-color:#4fd1c5"> <span><b style="color:var(--text)">AutoGPT mode</b> · fully autonomous, full report</span>
+        <input type="checkbox" id="agChk" style="width:20px;height:20px;accent-color:#4fd1c5"> <span><b style="color:var(--text)">AutoAgent mode</b> · fully autonomous, full report</span>
         <span id="agLock" style="margin-left:auto;font-size:11px;font-weight:700;border:1px solid var(--line2);border-radius:99px;padding:2px 8px">+$5/mo</span></label>
       <button class="btn" id="sendBtn">Send to PC ▸</button>
       <div class="err" id="sendErr"></div>
@@ -209,7 +209,7 @@ $$(".chip").forEach(c => c.onclick = () => { $("#goal").value = c.dataset.g; $("
 $("#sendBtn").onclick = async () => {
   const goal = $("#goal").value.trim(); if (!goal || !deviceId) return; $("#sendErr").textContent = "";
   const auto = $("#agChk").checked;
-  if (auto && !hasAuto) return $("#sendErr").innerHTML = 'AutoGPT mode is a $5/month add-on for Pro. <a href="../#autogpt">Add it here</a>.';
+  if (auto && !hasAuto) return $("#sendErr").innerHTML = 'AutoAgent mode is a $5/month add-on for Pro. <a href="../#autoagent-mode">Add it here</a>.';
   const { data, error } = await sb.from("remote_tasks").insert({ user_id: user.id, device_id: deviceId, goal, mode: auto ? "autogpt" : "standard" }).select().single();
   if (error) return $("#sendErr").textContent = /row-level security/.test(error.message) ? "Phone remote requires Pro." : error.message;
   $("#goal").value = ""; openTask(data.id);
